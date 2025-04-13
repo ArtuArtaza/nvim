@@ -1,4 +1,4 @@
-if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
+-- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 
 -- AstroLSP allows you to customize the features in AstroNvim's LSP configuration engine
 -- Configuration documentation can be found with `:h astrolsp`
@@ -9,6 +9,35 @@ if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 return {
   "AstroNvim/astrolsp",
   ---@type AstroLSPOpts
+
+  -- opts = function(plugin, opts)
+  --   -- insert "prolog_lsp" into our list of servers
+  --   opts.servers = opts.servers or {}
+  --   table.insert(opts.servers, "prolog_lsp")
+  --
+  --   -- extend our configuration table to have our new prolog server
+  --   opts.config = require("astrocore").extend_tbl(opts.config or {}, {
+  --     -- this must be a function to get access to the `lspconfig` module
+  --     prolog_lsp = {
+  --       -- the command for starting the server
+  --       cmd = {
+  --         "swipl",
+  --         "-g",
+  --         "use_module(library(lsp_server)).",
+  --         "-g",
+  --         "lsp_server:main",
+  --         "-t",
+  --         "halt",
+  --         "--",
+  --         "stdio",
+  --       },
+  --       -- the filetypes to attach the server to
+  --       filetypes = { "prolog" },
+  --       -- root directory detection for detecting the project root
+  --       root_dir = require("lspconfig.util").root_pattern "pack.pl",
+  --     },
+  --   })
+  -- end,
   opts = {
     -- Configuration table of features provided by AstroLSP
     features = {
@@ -26,7 +55,7 @@ return {
           -- "go",
         },
         ignore_filetypes = { -- disable format on save for specified filetypes
-          -- "python",
+          "python",
         },
       },
       disabled = { -- disable formatting capabilities for the listed language servers
@@ -41,11 +70,36 @@ return {
     -- enable servers that you already have installed without mason
     servers = {
       -- "pyright"
+      "zls",
+      "prolog_lsp",
     },
+
     -- customize language server configuration options passed to `lspconfig`
     ---@diagnostic disable: missing-fields
     config = {
       -- clangd = { capabilities = { offsetEncoding = "utf-8" } },
+      zls = {
+        cmd = { "/home/arturo/.zvm/master/zls" }, -- Specify the custom path to the zls executable
+        filetypes = { "zig", "zon" },
+        root_dir = require("lspconfig.util").root_pattern(".git", "build.zig"),
+        settings = {},
+      },
+      prolog_lsp = {
+        cmd = {
+          "swipl",
+          "-g",
+          "use_module(library(lsp_server)).",
+          "-g",
+          "lsp_server:main",
+          "-t",
+          "halt",
+          "--",
+          "stdio",
+        },
+        filetypes = { "pl", "prolog" },
+
+        root_dir = require("lspconfig.util").root_pattern "pack.pl",
+      },
     },
     -- customize how language servers are attached
     handlers = {
